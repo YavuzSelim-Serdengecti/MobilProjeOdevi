@@ -1,12 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CountryCard({ country }) {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: country.flags.png }} style={styles.flag} />
-      <Text style={styles.name}>{country.name.common}</Text>
-    </View>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('CountryDetail', { country })}
+    >
+      <Image source={{ uri: country.flags?.png || country.flag }} style={styles.flag} />
+      <Text style={styles.name}>{country.name?.common || country.name}</Text>
+    </TouchableOpacity>
   );
 }
 
