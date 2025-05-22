@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, FlatList, StyleSheet } from 'react-native';
 import CountryCard from '../components/CountryCard';
-
-const dummyCountries = [
-  { name: 'Turkey', flag: 'https://flagcdn.com/w320/tr.png' },
-  { name: 'Germany', flag: 'https://flagcdn.com/w320/de.png' },
-  { name: 'Japan', flag: 'https://flagcdn.com/w320/jp.png' },
-  { name: 'Brazil', flag: 'https://flagcdn.com/w320/br.png' },
-];
 
 export default function SearchScreen() {
   const [searchText, setSearchText] = useState('');
+  const [allCountries, setAllCountries] = useState([]);
 
-  const filteredCountries = dummyCountries.filter((country) =>
-    country.name.toLowerCase().includes(searchText.toLowerCase())
+  useEffect(() => {
+    fetch('https://restcountries.com/v3.1/all')
+      .then((res) => res.json())
+      .then((data) => setAllCountries(data))
+      .catch((err) => console.error('API Hatası:', err));
+  }, []);
+
+  const filteredCountries = allCountries.filter((country) =>
+    country.name.common.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
@@ -24,12 +25,11 @@ export default function SearchScreen() {
         value={searchText}
         onChangeText={setSearchText}
       />
+
       <FlatList
         data={filteredCountries}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <CountryCard name={item.name} flag={item.flag} />
-        )}
+        keyExtractor={(item) => item.cca3}
+        renderItem={({ item }) => <CountryCard country={item} />}
       />
     </View>
   );
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: '#fff',
+    marginTop: 50,
   },
   input: {
     borderWidth: 1,
