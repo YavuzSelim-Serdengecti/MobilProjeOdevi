@@ -1,58 +1,45 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import CountryCard from '../components/CountryCard';
 
-const mockCountries = [
-  {
-    name: 'Türkiye',
-    flag: 'https://flagcdn.com/w320/tr.png',
-  },
-  {
-    name: 'Almanya',
-    flag: 'https://flagcdn.com/w320/de.png',
-  },
-  {
-    name: 'Fransa',
-    flag: 'https://flagcdn.com/w320/fr.png',
-  },
-];
+export default function CountryListScreen() {
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const CountryListScreen = () => {
+  useEffect(() => {
+    fetch('https://restcountries.com/v3.1/all')
+      .then((response) => response.json())
+      .then((data) => {
+        setCountries(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('API Hatası:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#bc4749" />
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={mockCountries}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.flag }} style={styles.flag} />
-            <Text style={styles.countryName}>{item.name}</Text>
-          </View>
-        )}
-      />
-    </View>
+    <FlatList
+      data={countries}
+      keyExtractor={(item) => item.cca3}
+      renderItem={({ item }) => <CountryCard country={item} />}
+    />
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, marginTop:30, backgroundColor: '#fff' },
-  card: {
-    flexDirection: 'row',
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 12,
-    marginVertical: 8,
-    borderRadius: 10,
-    backgroundColor: '#f0f0f0',
-  },
-  flag: {
-    width: 60,
-    height: 40,
-    borderRadius: 4,
-    marginRight: 16,
-  },
-  countryName: {
-    fontSize: 18,
-    fontWeight: '600',
   },
 });
-
-export default CountryListScreen;
