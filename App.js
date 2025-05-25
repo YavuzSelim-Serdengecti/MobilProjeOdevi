@@ -41,10 +41,10 @@ function TabNavigator() {
     tabBarActiveTintColor: '#ffffff',
     tabBarInactiveTintColor: '#f5cccc',
     tabBarStyle: {
-      backgroundColor: '#bc4749',
-      paddingBottom: 5,
-      height: 80,
-    },
+  backgroundColor: '#03071e', // daha koyu uyumlu bir renk
+  paddingBottom: 5,
+  height: 80,
+},
     tabBarLabelStyle: {
       fontSize: 12,
     },
