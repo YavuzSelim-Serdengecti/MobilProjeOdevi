@@ -1,45 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import CountryCard from '../components/CountryCard';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-export default function CountryListScreen() {
+const CountryListScreen = ({ navigation }) => {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('https://restcountries.com/v3.1/all')
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
-        setCountries(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('API Hatası:', error);
+        const sortedCountries = data.sort((a, b) =>
+          a.name.common.localeCompare(b.name.common)
+        );
+        setCountries(sortedCountries);
         setLoading(false);
       });
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#bc4749" />
-      </View>
-    );
-  }
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('CountryDetail', { country: item })}
+    >
+      <Image source={{ uri: item.flags.png }} style={styles.flag} />
+      <Text style={styles.name}>{item.name.common}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <FlatList
-      data={countries}
-      keyExtractor={(item) => item.cca3}
-      renderItem={({ item }) => <CountryCard country={item} />}
-    />
+    <View style={styles.container}>
+      <Text style={styles.title}>Ülkeler Listesi</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#ffffff" />
+      ) : (
+        <FlatList
+          data={countries}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.cca3}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  loaderContainer: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#0c0c2b',
+    paddingTop: 40,
+    paddingHorizontal: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  list: {
+    paddingBottom: 20,
+  },
+  card: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#1a1a3c',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  flag: {
+    width: 60,
+    height: 40,
+    borderRadius: 4,
+    marginRight: 15,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#ffffff',
   },
 });
+
+export default CountryListScreen;
