@@ -10,6 +10,7 @@ import SearchScreen from './screens/SearchScreen';
 import RandomCountryScreen from './screens/RandomCountryScreen';
 import AboutScreen from './screens/AboutScreen';
 import CountryDetailScreen from './screens/CountryDetailScreen';
+import CompareScreen from './screens/CompareScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -51,6 +52,7 @@ function TabNavigator() {
       <Tab.Screen name="Arama" component={SearchScreen} />
       <Tab.Screen name="Rastgele" component={RandomCountryScreen} />
       <Tab.Screen name="Hakkında" component={AboutScreen} />
+      <Tab.Screen name="Karşılaştır" component={CompareScreen} />
     </Tab.Navigator>
   );
 }
