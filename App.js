@@ -18,36 +18,39 @@ const Stack = createNativeStackNavigator();
 // Tab menüsü tanımı
 function TabNavigator() {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+<Tab.Navigator
+  screenOptions={({ route }) => ({
+    headerShown: false,
+    tabBarIcon: ({ focused, color, size }) => {
+      let iconName;
 
-          if (route.name === 'Ana Sayfa') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Arama') {
-            iconName = focused ? 'search' : 'search-outline';
-          } else if (route.name === 'Rastgele') {
-            iconName = focused ? 'shuffle' : 'shuffle-outline';
-          } else if (route.name === 'Hakkında') {
-            iconName = focused ? 'information-circle' : 'information-circle-outline';
-          }
+      if (route.name === 'Ana Sayfa') {
+        iconName = focused ? 'home' : 'home-outline';
+      } else if (route.name === 'Arama') {
+        iconName = focused ? 'search' : 'search-outline';
+      } else if (route.name === 'Rastgele') {
+        iconName = focused ? 'shuffle' : 'shuffle-outline';
+      } else if (route.name === 'Hakkında') {
+        iconName = focused ? 'information-circle' : 'information-circle-outline';
+      } else if (route.name === 'Karşılaştır') {
+        iconName = focused ? 'git-compare' : 'git-compare-outline';
+      }
 
-          return <Ionicons name={iconName} size={focused ? 28 : 22} color={color} />;
-        },
-        tabBarActiveTintColor: '#ffffff',
-        tabBarInactiveTintColor: '#f5cccc',
-        tabBarStyle: {
-          backgroundColor: '#bc4749',
-          paddingBottom: 5,
-          height: 80,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-        },
-      })}
-    >
+      return <Ionicons name={iconName} size={focused ? 28 : 22} color={color} />;
+    },
+    tabBarActiveTintColor: '#ffffff',
+    tabBarInactiveTintColor: '#f5cccc',
+    tabBarStyle: {
+      backgroundColor: '#bc4749',
+      paddingBottom: 5,
+      height: 80,
+    },
+    tabBarLabelStyle: {
+      fontSize: 12,
+    },
+  })}
+>
+
       <Tab.Screen name="Ana Sayfa" component={CountryListScreen} />
       <Tab.Screen name="Arama" component={SearchScreen} />
       <Tab.Screen name="Rastgele" component={RandomCountryScreen} />
