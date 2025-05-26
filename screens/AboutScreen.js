@@ -1,67 +1,57 @@
-// screens/AboutScreen.js
-
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 export default function AboutScreen() {
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Uygulama Hakkında</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Hakkında</Text>
 
-      <Text style={styles.text}>
+      <Text style={styles.paragraph}>
         Merhaba! Ben <Text style={styles.bold}>Yavuz Selim Serdengeçti</Text>. 
         Yıldız Teknik Üniversitesi Bilgisayar ve Öğretim Teknolojileri Eğitimi (BÖTE) 4. sınıf öğrencisiyim.
       </Text>
 
-      <Text style={styles.text}>
-        Bu mobil uygulamayı <Text style={styles.bold}>Mobil Programlama</Text> dersi kapsamında geliştirdim. 
-        Uygulamanın amacı, kullanıcıların dünya üzerindeki ülkeleri tanımasını kolay ve eğlenceli hale getirmektir.
+      <Text style={styles.paragraph}>
+        Bu mobil uygulamayı, üniversitemde aldığım <Text style={styles.bold}>Mobil Programlama</Text> dersi kapsamında geliştirdim.
+        Uygulama, ülkeleri tanımayı kolaylaştırmak amacıyla hazırlandı.
       </Text>
 
-      <Text style={styles.text}>
-        Uygulamada birden fazla özellik yer almaktadır:
-        {'\n'}• Ülke listesini görüntüleme
-        {'\n'}• Arama ile ülke bulma
-        {'\n'}• Detaylı ülke bilgilerine erişme
-        {'\n'}• Rastgele ülke seçerek yarış tarzında öğrenme
+      <Text style={styles.paragraph}>
+        {"\u2022"} Ana sayfada ülkelere dair temel bilgilere ulaşabilirsiniz.{"\n"}
+        {"\u2022"} Arama ekranı ile istediğiniz ülkeyi filtreleyebilirsiniz.{"\n"}
+        {"\u2022"} Rastgele sayfası ile oyun/yarış mantığıyla eğlenerek öğrenebilirsiniz.{"\n"}
+        {"\u2022"} Karşılaştırma ekranı ile iki ülkeyi yan yana görüp kıyaslayabilirsiniz.
       </Text>
 
-      <Text style={styles.text}>
-        Özellikle <Text style={styles.bold}>Rastgele Ülke</Text> özelliği ile kullanıcılar, ülkeleri eğlenceli bir şekilde keşfedebilir.
+      <Text style={styles.paragraph}>
+        Umarım bu uygulama sizin için hem bilgilendirici hem de keyifli olur. Teşekkürler!
       </Text>
-
-      <Text style={styles.footer}>Teşekkürler ve iyi keşifler! 🌍</Text>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#0c0c2b',
     padding: 20,
-    backgroundColor: '#fff',
-    flex: 1,
+    flexGrow: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
+    color: '#ffffff',
     fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#bc4749',
+    marginBottom: 20,
     textAlign: 'center',
+    marginTop: 40,
   },
-  text: {
+  paragraph: {
     fontSize: 16,
-    lineHeight: 24,
+    color: '#e0e0e0',
     marginBottom: 15,
-    color: '#333',
+    lineHeight: 24,
   },
   bold: {
     fontWeight: 'bold',
-  },
-  footer: {
-    fontSize: 16,
-    marginTop: 20,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    color: '#555',
+    color: '#ffffff',
   },
 });
