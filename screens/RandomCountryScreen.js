@@ -1,41 +1,34 @@
-// screens/RandomCountryScreen.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, Button, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
-export default function RandomCountryScreen() {
-  const [randomCountry, setRandomCountry] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+export default function RandomCountryScreen({ navigation }) {
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
-  const fetchRandomCountry = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://restcountries.com/v3.1/all');
-      const data = await response.json();
-      const randomIndex = Math.floor(Math.random() * data.length);
-      setRandomCountry(data[randomIndex]);
-    } catch (error) {
-      console.error('Ülke verisi alınamadı:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetch('https://restcountries.com/v3.1/all')
+      .then(res => res.json())
+      .then(data => setCountries(data));
+  }, []);
 
-  const handleCountryPress = () => {
-    navigation.navigate('CountryDetail', { country: randomCountry });
+  const getRandomCountry = () => {
+    const randomIndex = Math.floor(Math.random() * countries.length);
+    setSelectedCountry(countries[randomIndex]);
   };
 
   return (
     <View style={styles.container}>
-      <Button title="Rastgele Ülke Seç" onPress={fetchRandomCountry} color="#bc4749" />
+      <TouchableOpacity style={styles.button} onPress={getRandomCountry}>
+        <Text style={styles.buttonText}>Rastgele Ülke Seç</Text>
+      </TouchableOpacity>
 
-      {loading && <ActivityIndicator size="large" color="#bc4749" style={{ marginTop: 20 }} />}
-
-      {randomCountry && !loading && (
-        <TouchableOpacity style={styles.card} onPress={handleCountryPress}>
-          <Image source={{ uri: randomCountry.flags.png }} style={styles.flag} />
-          <Text style={styles.name}>{randomCountry.name.common}</Text>
+      {selectedCountry && (
+        <TouchableOpacity
+          style={styles.countryCard}
+          onPress={() => navigation.navigate('CountryDetail', { country: selectedCountry })}
+        >
+          <Image source={{ uri: selectedCountry.flags.png }} style={styles.flag} />
+          {/* Ülke ismi artık gösterilmiyor */}
         </TouchableOpacity>
       )}
     </View>
@@ -44,32 +37,32 @@ export default function RandomCountryScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#fff',
     flex: 1,
+    backgroundColor: '#0c0c2b',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
-  card: {
-    marginTop: 30,
-    padding: 20,
+  button: {
+    backgroundColor: '#2e2e5e',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 30,
+    marginBottom: 30,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  countryCard: {
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    backgroundColor: '#fefefe',
-    width: '80%',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
+    backgroundColor: '#1e1e3f',
+    padding: 20,
+    borderRadius: 15,
   },
   flag: {
-    width: 200,
+    width: 200, // daha büyük bayrak
     height: 120,
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    borderRadius: 8,
   },
 });
