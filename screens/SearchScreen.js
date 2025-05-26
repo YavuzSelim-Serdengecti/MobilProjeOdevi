@@ -1,35 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, StyleSheet } from 'react-native';
-import CountryCard from '../components/CountryCard';
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function SearchScreen() {
-  const [searchText, setSearchText] = useState('');
-  const [allCountries, setAllCountries] = useState([]);
+export default function SearchScreen({ navigation }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [countries, setCountries] = useState([]);
+  const [filteredCountries, setFilteredCountries] = useState([]);
 
   useEffect(() => {
     fetch('https://restcountries.com/v3.1/all')
-      .then((res) => res.json())
-      .then((data) => setAllCountries(data))
-      .catch((err) => console.error('API Hatası:', err));
+      .then(response => response.json())
+      .then(data => {
+        setCountries(data);
+        setFilteredCountries(data);
+      });
   }, []);
 
-  const filteredCountries = allCountries.filter((country) =>
-    country.name.common.toLowerCase().includes(searchText.toLowerCase())
+  useEffect(() => {
+    const filtered = countries.filter(country =>
+      country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCountries(filtered);
+  }, [searchQuery]);
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('CountryDetail', { country: item })}
+    >
+      <Image source={{ uri: item.flags.png }} style={styles.flag} />
+      <Text style={styles.countryName}>{item.name.common}</Text>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Ülke adı yazın..."
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-
+      <View style={styles.searchBox}>
+        <Ionicons name="search" size={24} color="gray" style={styles.searchIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Ara..."
+          placeholderTextColor="#ccc"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
       <FlatList
         data={filteredCountries}
+        renderItem={renderItem}
         keyExtractor={(item) => item.cca3}
-        renderItem={({ item }) => <CountryCard country={item} />}
       />
     </View>
   );
@@ -38,16 +57,43 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
-    marginTop: 50,
+    backgroundColor: '#0c0c2b',
+    paddingTop: 50,
+    paddingHorizontal: 12,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    backgroundColor: '#1e1e3f',
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  searchIcon: {
+    marginRight: 10,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
+    color: '#fff',
+    fontSize: 18,
+    flex: 1,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1e1e3f',
+    padding: 12,
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 12,
+    marginBottom: 10,
+  },
+  flag: {
+    width: 50,
+    height: 30,
+    marginRight: 15,
+    borderRadius: 4,
+  },
+  countryName: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
