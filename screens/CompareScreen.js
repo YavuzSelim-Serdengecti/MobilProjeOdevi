@@ -1,88 +1,90 @@
-// screens/CompareScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 
 export default function CompareScreen() {
   const [countries, setCountries] = useState([]);
-  const [country1, setCountry1] = useState('');
-  const [country2, setCountry2] = useState('');
-  const [data1, setData1] = useState(null);
-  const [data2, setData2] = useState(null);
+  const [selectedCountries, setSelectedCountries] = useState([]);
 
   useEffect(() => {
     fetch('https://restcountries.com/v3.1/all')
-      .then((res) => res.json())
-      .then((data) => {
-        const sorted = data.sort((a, b) =>
-          a.name.common.localeCompare(b.name.common)
-        );
-        setCountries(sorted);
-      });
+      .then(res => res.json())
+      .then(data => setCountries(data));
   }, []);
 
-  useEffect(() => {
-    if (country1) {
-      fetch(`https://restcountries.com/v3.1/name/${country1}`)
-        .then((res) => res.json())
-        .then((data) => setData1(data[0]));
-    }
-    if (country2) {
-      fetch(`https://restcountries.com/v3.1/name/${country2}`)
-        .then((res) => res.json())
-        .then((data) => setData2(data[0]));
-    }
-  }, [country1, country2]);
+  const getRandomCountries = () => {
+    const shuffled = [...countries].sort(() => 0.5 - Math.random());
+    setSelectedCountries(shuffled.slice(0, 2));
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Ülke Karşılaştırma</Text>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={getRandomCountries}>
+        <Text style={styles.buttonText}>İki Ülke Karşılaştır</Text>
+      </TouchableOpacity>
 
-      <Picker
-        selectedValue={country1}
-        onValueChange={(value) => setCountry1(value)}
-        style={styles.picker}
-      >
-        <Picker.Item label="1. Ülkeyi Seçin" value="" />
-        {countries.map((c) => (
-          <Picker.Item key={c.cca3} label={c.name.common} value={c.name.common} />
+      <ScrollView contentContainerStyle={styles.cardContainer}>
+        {selectedCountries.map((country, index) => (
+          <View key={index} style={styles.countryCard}>
+            <Image source={{ uri: country.flags.png }} style={styles.flag} />
+            <Text style={styles.countryName}>{country.name.common}</Text>
+            <Text style={styles.infoText}>Başkent: {country.capital?.[0] || 'Yok'}</Text>
+            <Text style={styles.infoText}>Nüfus: {country.population.toLocaleString()}</Text>
+            <Text style={styles.infoText}>Bölge: {country.region}</Text>
+            <Text style={styles.infoText}>Para Birimi: {Object.values(country.currencies || {})[0]?.name || 'Bilinmiyor'}</Text>
+            <Text style={styles.infoText}>Dil: {Object.values(country.languages || {})[0] || 'Bilinmiyor'}</Text>
+          </View>
         ))}
-      </Picker>
-
-      <Picker
-        selectedValue={country2}
-        onValueChange={(value) => setCountry2(value)}
-        style={styles.picker}
-      >
-        <Picker.Item label="2. Ülkeyi Seçin" value="" />
-        {countries.map((c) => (
-          <Picker.Item key={c.cca3} label={c.name.common} value={c.name.common} />
-        ))}
-      </Picker>
-
-      <View style={styles.comparison}>
-        <View style={styles.box}>
-          <Text style={styles.countryName}>{data1?.name?.common || '—'}</Text>
-          <Text>Nüfus: {data1?.population?.toLocaleString() || '—'}</Text>
-          <Text>Başkent: {data1?.capital?.[0] || '—'}</Text>
-          <Text>Yüzölçümü: {data1?.area} km²</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.countryName}>{data2?.name?.common || '—'}</Text>
-          <Text>Nüfus: {data2?.population?.toLocaleString() || '—'}</Text>
-          <Text>Başkent: {data2?.capital?.[0] || '—'}</Text>
-          <Text>Yüzölçümü: {data2?.area} km²</Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: '#fff' },
-  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
-  picker: { marginVertical: 10, backgroundColor: '#f0f0f0' },
-  comparison: { flexDirection: 'row', justifyContent: 'space-between' },
-  box: { flex: 1, padding: 10, margin: 5, backgroundColor: '#e8e8e8', borderRadius: 8 },
-  countryName: { fontWeight: 'bold', fontSize: 16, marginBottom: 5 },
+  container: {
+    flex: 1,
+    backgroundColor: '#0c0c2b',
+    alignItems: 'center',
+    paddingTop: 60,
+  },
+  button: {
+    backgroundColor: '#2e2e5e',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  cardContainer: {
+    paddingBottom: 40,
+    paddingHorizontal: 10,
+  },
+  countryCard: {
+    backgroundColor: '#1e1e3f',
+    borderRadius: 15,
+    padding: 20,
+    marginVertical: 10,
+    width: 330,
+    alignSelf: 'center',
+  },
+  flag: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  countryName: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  infoText: {
+    color: '#f0f0f0',
+    fontSize: 16,
+    marginBottom: 4,
+  },
 });
